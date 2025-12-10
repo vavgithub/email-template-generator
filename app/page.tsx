@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { generateEmailTemplate, type TemplateData } from '@/lib/email-template';
 import { Copy, Check, Mail, Maximize2, Shield } from 'lucide-react';
@@ -58,14 +57,39 @@ export default function Home() {
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(generatedHtml);
-    setCopied(true);
-    toast({
-      title: 'Copied!',
-      description: 'Email signature HTML copied to clipboard.',
-    });
-    setTimeout(() => setCopied(false), 2000);
+  const copyToClipboard = async () => {
+    if (!generatedHtml) return;
+
+    try {
+      const type = 'text/html';
+      const blob = new Blob([generatedHtml], { type });
+      const data = [new ClipboardItem({ [type]: blob })];
+      await navigator.clipboard.write(data);
+      
+      setCopied(true);
+      toast({
+        title: 'Copied!',
+        description: 'Signature copied! You can now paste it into your email settings.',
+      });
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      // Fallback for browsers that don't support ClipboardItem or blocked permission
+      try {
+        await navigator.clipboard.writeText(generatedHtml);
+        setCopied(true);
+        toast({
+          title: 'HTML Copied',
+          description: 'Rich copy failed, but HTML code was copied as a fallback.',
+          variant: 'destructive',
+        });
+      } catch (e) {
+        toast({
+          title: 'Error',
+          description: 'Failed to copy signature.',
+          variant: 'destructive',
+        });
+      }
+    }
   };
 
   return (
@@ -166,24 +190,30 @@ export default function Home() {
           {showPreview && (
             <Card className="shadow-lg max-w-4xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
               <CardHeader>
-                <CardTitle>Preview & Code</CardTitle>
-                <CardDescription>See how your signature will look and copy the HTML</CardDescription>
+                <CardTitle>Preview & Copy</CardTitle>
+                <CardDescription>See how your signature will look and copy it to your clipboard</CardDescription>
               </CardHeader>
               <CardContent>
-                <Tabs defaultValue="preview" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="preview">Preview</TabsTrigger>
-                    <TabsTrigger value="code">HTML Code</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="preview" className="mt-4">
-                    <div className="relative">
-                      {generatedHtml && (
+                <div className="relative">
+                  {generatedHtml && (
+                    <>
+                      <div className="absolute top-2 right-2 z-10 flex gap-2">
+                        <Button
+                          onClick={copyToClipboard}
+                          size="sm"
+                          variant="outline"
+                          className="bg-white/80 hover:bg-white"
+                          disabled={!generatedHtml}
+                        >
+                          {copied ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
+                          {copied ? 'Copied!' : 'Copy Signature'}
+                        </Button>
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button
                               variant="outline"
                               size="icon"
-                              className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-white"
+                              className="bg-white/80 hover:bg-white"
                               title="Full Screen Preview"
                             >
                               <Maximize2 className="w-4 h-4" />
@@ -202,47 +232,30 @@ export default function Home() {
                             </div>
                           </DialogContent>
                         </Dialog>
-                      )}
-                      <div className="border rounded-lg p-2 md:p-4 bg-white min-h-[300px] md:min-h-[500px] overflow-x-auto">
-                        {generatedHtml ? (
-                          <div className="min-w-[600px] p-2 email-signature-preview">
-                            <div dangerouslySetInnerHTML={{ __html: generatedHtml }} />
-                          </div>
-                        ) : (
-                          <div className="flex items-center justify-center h-[300px] md:h-[500px] text-slate-400 text-sm md:text-base">
-                            Fill in the form and click Generate to see your signature
-                          </div>
-                        )}
                       </div>
-                    </div>
-                  </TabsContent>
-                  <TabsContent value="code" className="mt-4">
-                    <div className="relative">
-                      <Button
-                        onClick={copyToClipboard}
-                        size="sm"
-                        variant="outline"
-                        className="absolute top-2 right-2 z-10"
-                        disabled={!generatedHtml}
-                      >
-                        {copied ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
-                        {copied ? 'Copied!' : 'Copy'}
-                      </Button>
-                      <pre className="border rounded-lg p-4 bg-slate-900 text-slate-100 text-xs overflow-auto max-h-[500px] min-h-[500px]">
-                        <code>{generatedHtml || '// Your HTML code will appear here'}</code>
-                      </pre>
-                    </div>
-                  </TabsContent>
-                </Tabs>
+                    </>
+                  )}
+                  <div className="border rounded-lg p-2 md:p-4 bg-white min-h-[300px] md:min-h-[500px] overflow-x-auto">
+                    {generatedHtml ? (
+                      <div className="min-w-[600px] p-2 email-signature-preview">
+                        <div dangerouslySetInnerHTML={{ __html: generatedHtml }} />
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center h-[300px] md:h-[500px] text-slate-400 text-sm md:text-base">
+                        Fill in the form and click Generate to see your signature
+                      </div>
+                    )}
+                  </div>
+                </div>
 
                 {generatedHtml && (
                   <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                     <h3 className="font-semibold text-blue-900 mb-2">How to use:</h3>
                     <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
-                      <li>Click the "Copy" button above to copy the HTML code</li>
-                      <li>Open your email client settings</li>
+                      <li>Click the "Copy Signature" button above</li>
+                      <li>Open your email client settings (Outlook, Gmail, etc.)</li>
                       <li>Find the signature section</li>
-                      <li>Paste the HTML code as your signature</li>
+                      <li>Paste (Ctrl+V or Cmd+V) directly into the signature box</li>
                     </ol>
                   </div>
                 )}

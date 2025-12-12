@@ -19,6 +19,7 @@ export default function Home() {
     title: '',
     phoneNumber: '',
     email: '',
+    meetingLink: '',
   });
   const [generatedHtml, setGeneratedHtml] = useState('');
   const [showPreview, setShowPreview] = useState(false);
@@ -173,6 +174,21 @@ export default function Home() {
                       onChange={handleInputChange}
                       placeholder="yourname@itfgroup.com"
                       required
+                      className="text-base"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-1 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="meetingLink">Schedule a call Link</Label>
+                    <Input
+                      id="meetingLink"
+                      name="meetingLink"
+                      type="url"
+                      value={formData.meetingLink}
+                      onChange={handleInputChange}
+                      placeholder="https://meetings.hubspot.com/your-link"
                       className="text-base"
                     />
                   </div>

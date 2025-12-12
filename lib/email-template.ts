@@ -3,6 +3,7 @@ export type TemplateData = {
   title: string;
   phoneNumber: string;
   email: string;
+  meetingLink?: string;
 };
 
 export function generateEmailTemplate(data: TemplateData): string {
@@ -12,6 +13,7 @@ export function generateEmailTemplate(data: TemplateData): string {
   const address = '11990 Missouri Bottom Road Hazelwood, MO 63042';
   const websiteUrl = 'http://itfgroup.com/';
   const websiteDisplay = 'www.itfgroup.com';
+  const meetingUrl = data.meetingLink || 'https://meetings.hubspot.com/sam-burkhan';
 
   // Extract numbers only for the tel: link
   // Handles extension format like "123-456-7890 ext. 123" -> "tel:1234567890,,123"
@@ -190,7 +192,7 @@ export function generateEmailTemplate(data: TemplateData): string {
             <tr>
                 <td colspan="3" style="height: 32px;">
                     <p style="margin: 0.1px">
-                        <a href="https://meetings.hubspot.com/sam-burkhan" style="
+                        <a href="${meetingUrl}" style="
                             display: inline-block;
                             vertical-align: middle;
                         ">

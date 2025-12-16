@@ -10,8 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { LogOut, Eye, Copy, Check, Users, Calendar, Mail } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { Toaster } from '@/components/ui/toaster';
+import { toast } from 'sonner';
 import { format } from 'date-fns';
 
 export type EmailSignature = {
@@ -51,9 +50,9 @@ const MOCK_SIGNATURES: EmailSignature[] = [
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const { toast } = useToast();
   const [signatures, setSignatures] = useState<EmailSignature[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [selectedSignature, setSelectedSignature] = useState<EmailSignature | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -62,6 +61,7 @@ export default function AdminDashboard() {
       if (!user) {
         router.push('/admin');
       } else {
+        setIsCheckingAuth(false);
         fetchSignatures();
       }
     });
@@ -82,10 +82,8 @@ export default function AdminDashboard() {
       setSignatures(fetchedSignatures);
     } catch (error) {
       console.error('Error fetching signatures:', error);
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to fetch signatures.',
-        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -100,12 +98,19 @@ export default function AdminDashboard() {
   const copyToClipboard = (html: string) => {
     navigator.clipboard.writeText(html);
     setCopied(true);
-    toast({
-      title: 'Copied!',
+    toast.success('Copied!', {
       description: 'HTML code copied to clipboard.',
     });
     setTimeout(() => setCopied(false), 2000);
   };
+
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+        <div className="text-slate-600">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -224,7 +229,7 @@ export default function AdminDashboard() {
                               <DialogHeader>
                                 <DialogTitle>{signature.name} - Email Signature</DialogTitle>
                                 <DialogDescription>
-                                  Created on {format(new Date(signature.created_at), 'MMMM dd, yyyy at h:mm a')}
+                                  Created on {format(new Date(signature.created_at), "MMMM dd, yyyy 'at' h:mm a")}
                                 </DialogDescription>
                               </DialogHeader>
                               <div className="space-y-4">
@@ -297,7 +302,6 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
-      <Toaster />
     </div>
   );
 }

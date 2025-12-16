@@ -11,11 +11,9 @@ import { db } from '@/lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { Copy, Check, Mail, Maximize2, Shield } from 'lucide-react';
 import Link from 'next/link';
-import { useToast } from '@/hooks/use-toast';
-import { Toaster } from '@/components/ui/toaster';
+import { toast } from 'sonner';
 
 export default function Home() {
-  const { toast } = useToast();
   const [formData, setFormData] = useState<TemplateData>({
     name: '',
     title: '',
@@ -49,16 +47,13 @@ export default function Home() {
         created_at: new Date().toISOString(),
       });
 
-      toast({
-        title: 'Success!',
+      toast.success('Success!', {
         description: 'Your email signature has been generated.',
       });
     } catch (error) {
       console.error('Error saving signature:', error);
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to generate email signature. Please try again.',
-        variant: 'destructive',
       });
     } finally {
       setIsSubmitting(false);
@@ -75,8 +70,7 @@ export default function Home() {
       await navigator.clipboard.write(data);
       
       setCopied(true);
-      toast({
-        title: 'Copied!',
+      toast.success('Copied!', {
         description: 'Signature copied! You can now paste it into your email settings.',
       });
       setTimeout(() => setCopied(false), 2000);
@@ -85,16 +79,12 @@ export default function Home() {
       try {
         await navigator.clipboard.writeText(generatedHtml);
         setCopied(true);
-        toast({
-          title: 'HTML Copied',
+        toast.warning('HTML Copied', {
           description: 'Rich copy failed, but HTML code was copied as a fallback.',
-          variant: 'destructive',
         });
       } catch (e) {
-        toast({
-          title: 'Error',
+        toast.error('Error', {
           description: 'Failed to copy signature.',
-          variant: 'destructive',
         });
       }
     }
@@ -102,8 +92,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="container mx-auto py-8 px-4 max-w-7xl">
-        <div className="flex justify-end mb-4">
+      <div className="container mx-auto py-8 px-4 max-w-7xl mt-2">
+        <div className="flex justify-end mb-4 hidden">
           <Button variant="ghost" size="sm" asChild className="text-slate-500 hover:text-slate-900 gap-2">
             <Link href="/admin">
               <Shield className="w-4 h-4" />
@@ -287,7 +277,6 @@ export default function Home() {
           )}
         </div>
       </div>
-      <Toaster />
     </div>
   );
 }

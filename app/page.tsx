@@ -7,6 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { generateEmailTemplate, type TemplateData } from '@/lib/email-template';
+import { db } from '@/lib/firebase';
+import { collection, addDoc } from 'firebase/firestore';
 import { Copy, Check, Mail, Maximize2, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
@@ -40,14 +42,19 @@ export default function Home() {
       setGeneratedHtml(html);
       setShowPreview(true);
 
-      // Simulated success
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Save to Firestore
+      await addDoc(collection(db, 'signatures'), {
+        ...formData,
+        template_html: html,
+        created_at: new Date().toISOString(),
+      });
 
       toast({
         title: 'Success!',
         description: 'Your email signature has been generated.',
       });
     } catch (error) {
+      console.error('Error saving signature:', error);
       toast({
         title: 'Error',
         description: 'Failed to generate email signature. Please try again.',

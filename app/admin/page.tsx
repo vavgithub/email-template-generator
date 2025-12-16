@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,22 +24,16 @@ export default function AdminLogin() {
     setIsLoading(true);
 
     try {
-      // Mock login check
-      if (email === 'admin@itfgroup.com' && password === 'admin123') {
-        // Set a simple cookie or localStorage to simulate session
-        localStorage.setItem('admin_session', 'true');
-        
-        toast({
-          title: 'Success!',
-          description: 'Login successful. Redirecting...',
-        });
+      // Firebase login
+      await signInWithEmailAndPassword(auth, email, password);
+      
+      toast({
+        title: 'Success!',
+        description: 'Login successful. Redirecting...',
+      });
 
-        setTimeout(() => {
-          router.push('/admin/dashboard');
-        }, 1000);
-      } else {
-        throw new Error('Invalid credentials');
-      }
+      // Redirect to dashboard
+      router.push('/admin/dashboard');
     } catch (error) {
       toast({
         title: 'Login Failed',
@@ -104,11 +100,11 @@ export default function AdminLogin() {
               </Button>
             </form>
 
-            <div className="mt-6 p-4 bg-slate-50 rounded-lg border">
+            {/* <div className="mt-6 p-4 bg-slate-50 rounded-lg border">
               <p className="text-xs text-slate-600 font-semibold mb-2">Demo Credentials:</p>
               <p className="text-xs text-slate-600">Email: admin@itfgroup.com</p>
               <p className="text-xs text-slate-600">Password: admin123</p>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
 

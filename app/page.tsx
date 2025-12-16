@@ -92,15 +92,15 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="container mx-auto py-8 px-4 max-w-7xl mt-2">
-        <div className="flex justify-end mb-4 hidden">
+      <div className="container mx-auto py-8 lg:py-16 px-4 max-w-7xl ">
+        {/* <div className="flex justify-end mb-4 hidden">
           <Button variant="ghost" size="sm" asChild className="text-slate-500 hover:text-slate-900 gap-2">
             <Link href="/admin">
               <Shield className="w-4 h-4" />
               <span className="hidden sm:inline">Admin Portal</span>
             </Link>
           </Button>
-        </div>
+        </div> */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Mail className="w-8 h-8 md:w-10 md:h-10 text-red-600" />

@@ -31,7 +31,7 @@ export function generateEmailTemplate(data: TemplateData): string {
        const mainPart = data.phoneNumber.substring(0, extIndex).replace(/\D/g, '');
        const extPart = data.phoneNumber.substring(extIndex).replace(/\D/g, '');
        // Format for mobile dialing with pause (commas)
-       phoneHref = `tel:+1${mainPart},,${extPart}`;
+       phoneHref = `tel:+1${mainPart},${extPart}`;
     } else {
        // Simple number cleaning
        const mainPart = data.phoneNumber.replace(/\D/g, '');

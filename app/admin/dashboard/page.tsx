@@ -2,26 +2,29 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { LogOut, Eye, Copy, Check, Users, Calendar, Mail } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { Toaster } from '@/components/ui/toaster';
+import { toast } from 'sonner';
 import { format } from 'date-fns';
 
 export type EmailSignature = {
   id: string;
   name: string;
   title: string;
-  linkedin_url: string;
-  facebook_url: string;
-  phone_number: string;
-  address: string;
-  website_url: string;
-  website_display: string;
+  linkedin_url?: string;
+  facebook_url?: string;
+  phoneNumber: string;
+  address?: string;
+  website_url?: string;
+  website_display?: string;
   email: string;
+  meetingLink?: string;
   template_html: string;
   created_at: string;
 };
@@ -34,11 +37,12 @@ const MOCK_SIGNATURES: EmailSignature[] = [
     title: 'Software Engineer',
     linkedin_url: 'https://linkedin.com/in/johndoe',
     facebook_url: '',
-    phone_number: '(555) 123-4567',
+    phoneNumber: '(555) 123-4567',
     address: '123 Tech Lane, Silicon Valley, CA',
     website_url: 'https://itfgroup.com',
     website_display: 'www.itfgroup.com',
     email: 'john.doe@itfgroup.com',
+    meetingLink: 'https://meetings.hubspot.com/john-doe',
     template_html: '<div>Mock Signature HTML</div>',
     created_at: new Date().toISOString(),
   }
@@ -46,35 +50,40 @@ const MOCK_SIGNATURES: EmailSignature[] = [
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const { toast } = useToast();
   const [signatures, setSignatures] = useState<EmailSignature[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [selectedSignature, setSelectedSignature] = useState<EmailSignature | null>(null);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    checkAuth();
-    fetchSignatures();
-  }, []);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push('/admin');
+      } else {
+        setIsCheckingAuth(false);
+        fetchSignatures();
+      }
+    });
 
-  const checkAuth = async () => {
-    // Simple mock auth check
-    const session = localStorage.getItem('admin_session');
-    if (!session) {
-      router.push('/admin');
-    }
-  };
+    return () => unsubscribe();
+  }, []);
 
   const fetchSignatures = async () => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setSignatures(MOCK_SIGNATURES);
+      const q = query(collection(db, 'signatures'), orderBy('created_at', 'desc'));
+      const querySnapshot = await getDocs(q);
+      
+      const fetchedSignatures: EmailSignature[] = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as EmailSignature));
+      
+      setSignatures(fetchedSignatures);
     } catch (error) {
-      toast({
-        title: 'Error',
+      console.error('Error fetching signatures:', error);
+      toast.error('Error', {
         description: 'Failed to fetch signatures.',
-        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -82,19 +91,26 @@ export default function AdminDashboard() {
   };
 
   const handleLogout = async () => {
-    localStorage.removeItem('admin_session');
+    await signOut(auth);
     router.push('/admin');
   };
 
   const copyToClipboard = (html: string) => {
     navigator.clipboard.writeText(html);
     setCopied(true);
-    toast({
-      title: 'Copied!',
+    toast.success('Copied!', {
       description: 'HTML code copied to clipboard.',
     });
     setTimeout(() => setCopied(false), 2000);
   };
+
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+        <div className="text-slate-600">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -119,7 +135,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Submissions</CardTitle>
@@ -144,7 +160,7 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
 
-          <Card>
+          {/* <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Active Templates</CardTitle>
               <Mail className="w-4 h-4 text-slate-600" />
@@ -153,7 +169,7 @@ export default function AdminDashboard() {
               <div className="text-2xl font-bold">1</div>
               <p className="text-xs text-slate-600 mt-1">ITF Group template</p>
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
 
         <Card>
@@ -192,7 +208,7 @@ export default function AdminDashboard() {
                         <TableCell className="font-medium">{signature.name}</TableCell>
                         <TableCell>{signature.title}</TableCell>
                         <TableCell className="text-sm">{signature.email}</TableCell>
-                        <TableCell className="text-sm">{signature.phone_number}</TableCell>
+                        <TableCell className="text-sm">{signature.phoneNumber}</TableCell>
                         <TableCell className="text-sm">
                           {format(new Date(signature.created_at), 'MMM dd, yyyy')}
                         </TableCell>
@@ -213,7 +229,7 @@ export default function AdminDashboard() {
                               <DialogHeader>
                                 <DialogTitle>{signature.name} - Email Signature</DialogTitle>
                                 <DialogDescription>
-                                  Created on {format(new Date(signature.created_at), 'MMMM dd, yyyy at h:mm a')}
+                                  Created on {format(new Date(signature.created_at), "MMMM dd, yyyy 'at' h:mm a")}
                                 </DialogDescription>
                               </DialogHeader>
                               <div className="space-y-4">
@@ -232,26 +248,24 @@ export default function AdminDashboard() {
                                   </div>
                                   <div>
                                     <p className="text-xs font-semibold text-slate-600 mb-1">Phone</p>
-                                    <p className="text-sm">{signature.phone_number}</p>
+                                    <p className="text-sm">{signature.phoneNumber}</p>
                                   </div>
                                   <div>
                                     <p className="text-xs font-semibold text-slate-600 mb-1">Website</p>
-                                    <p className="text-sm">{signature.website_display}</p>
+                                    <p className="text-sm">{signature.website_display || 'www.itfgroup.com'}</p>
                                   </div>
                                   <div>
                                     <p className="text-xs font-semibold text-slate-600 mb-1">Address</p>
-                                    <p className="text-sm">{signature.address}</p>
+                                    <p className="text-sm">{signature.address || '11990 Missouri Bottom Road Hazelwood, MO 63042'}</p>
                                   </div>
-                                  {signature.linkedin_url && (
-                                    <div>
-                                      <p className="text-xs font-semibold text-slate-600 mb-1">LinkedIn</p>
-                                      <p className="text-sm truncate">{signature.linkedin_url}</p>
-                                    </div>
-                                  )}
-                                  {signature.facebook_url && (
-                                    <div>
-                                      <p className="text-xs font-semibold text-slate-600 mb-1">Facebook</p>
-                                      <p className="text-sm truncate">{signature.facebook_url}</p>
+                                  {signature.meetingLink && (
+                                    <div className="col-span-2">
+                                      <p className="text-xs font-semibold text-slate-600 mb-1">Meeting Link</p>
+                                      <p className="text-sm truncate text-blue-600 hover:underline">
+                                        <a href={signature.meetingLink} target="_blank" rel="noopener noreferrer">
+                                          {signature.meetingLink}
+                                        </a>
+                                      </p>
                                     </div>
                                   )}
                                 </div>
@@ -259,15 +273,6 @@ export default function AdminDashboard() {
                                 <div>
                                   <div className="flex items-center justify-between mb-2">
                                     <h3 className="font-semibold text-sm">Preview</h3>
-                                  </div>
-                                  <div className="border rounded-lg p-4 bg-white overflow-auto">
-                                    <div dangerouslySetInnerHTML={{ __html: signature.template_html }} />
-                                  </div>
-                                </div>
-
-                                <div>
-                                  <div className="flex items-center justify-between mb-2">
-                                    <h3 className="font-semibold text-sm">HTML Code</h3>
                                     <Button
                                       onClick={() => copyToClipboard(signature.template_html)}
                                       size="sm"
@@ -275,12 +280,14 @@ export default function AdminDashboard() {
                                       className="gap-2"
                                     >
                                       {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                                      {copied ? 'Copied!' : 'Copy'}
+                                      {copied ? 'Copied!' : 'Copy Signature'}
                                     </Button>
                                   </div>
-                                  <pre className="border rounded-lg p-4 bg-slate-900 text-slate-100 text-xs overflow-auto max-h-64">
-                                    <code>{signature.template_html}</code>
-                                  </pre>
+                                  <div className="border rounded-lg p-4 bg-white overflow-auto min-h-[300px]">
+                                    <div className="email-signature-preview">
+                                      <div dangerouslySetInnerHTML={{ __html: signature.template_html }} />
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
                             </DialogContent>
@@ -295,7 +302,6 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
-      <Toaster />
     </div>
   );
 }

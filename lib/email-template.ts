@@ -8,34 +8,37 @@ export type TemplateData = {
 
 export function generateEmailTemplate(data: TemplateData): string {
   // Hardcoded constants
-  const linkedinUrl = 'https://www.linkedin.com/company/itf-llc-group/about/';
-  const facebookUrl = 'https://www.facebook.com/itfgroup';
-  const address = '11990 Missouri Bottom Road Hazelwood, MO 63042';
-  const websiteUrl = 'http://itfgroup.com/';
-  const websiteDisplay = 'www.itfgroup.com';
-  const meetingUrl = data.meetingLink || 'https://meetings.hubspot.com/sam-burkhan';
+  const linkedinUrl = "https://www.linkedin.com/company/itf-llc-group/about/";
+  const facebookUrl = "https://www.facebook.com/itfgroup";
+  const address = "11990 Missouri Bottom Road Hazelwood, MO, US 63042";
+  const websiteUrl = "http://itfgroup.com/";
+  const websiteDisplay = "www.itfgroup.com";
+  const meetingUrl =
+    data.meetingLink || "https://meetings.hubspot.com/sam-burkhan";
 
   // Extract numbers only for the tel: link
   // Handles extension format like "123-456-7890 ext. 123" -> "tel:1234567890,,123"
   // Handles simple format like "123-456-7890" -> "tel:1234567890"
-  let phoneHref = '';
+  let phoneHref = "";
   if (data.phoneNumber) {
     // Remove all non-digit and non-letter characters
-    const cleanNumber = data.phoneNumber.replace(/[^\d+a-zA-Z]/g, '');
-    
+    const cleanNumber = data.phoneNumber.replace(/[^\d+a-zA-Z]/g, "");
+
     // Check for extension indicators
     const extIndex = data.phoneNumber.toLowerCase().search(/(ext|x)\.?\s*/);
-    
+
     if (extIndex !== -1) {
-       // Split main number and extension
-       const mainPart = data.phoneNumber.substring(0, extIndex).replace(/\D/g, '');
-       const extPart = data.phoneNumber.substring(extIndex).replace(/\D/g, '');
-       // Format for mobile dialing with pause (commas)
-       phoneHref = `tel:+1${mainPart},${extPart}`;
+      // Split main number and extension
+      const mainPart = data.phoneNumber
+        .substring(0, extIndex)
+        .replace(/\D/g, "");
+      const extPart = data.phoneNumber.substring(extIndex).replace(/\D/g, "");
+      // Format for mobile dialing with pause (commas)
+      phoneHref = `tel:+1${mainPart},${extPart}`;
     } else {
-       // Simple number cleaning
-       const mainPart = data.phoneNumber.replace(/\D/g, '');
-       phoneHref = `tel:+1${mainPart}`;
+      // Simple number cleaning
+      const mainPart = data.phoneNumber.replace(/\D/g, "");
+      phoneHref = `tel:+1${mainPart}`;
     }
   }
 

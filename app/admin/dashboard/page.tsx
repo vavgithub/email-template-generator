@@ -1,17 +1,37 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
-import { auth, db } from '@/lib/firebase';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { LogOut, Eye, Copy, Check, Users, Calendar, Mail } from 'lucide-react';
-import { toast } from 'sonner';
-import { format } from 'date-fns';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { LogOut, Eye, Copy, Check, Users, Calendar, Mail } from "lucide-react";
+import { toast } from "sonner";
+import { format } from "date-fns";
 
 export type EmailSignature = {
   id: string;
@@ -32,20 +52,20 @@ export type EmailSignature = {
 // Mock data
 const MOCK_SIGNATURES: EmailSignature[] = [
   {
-    id: '1',
-    name: 'John Doe',
-    title: 'Software Engineer',
-    linkedin_url: 'https://linkedin.com/in/johndoe',
-    facebook_url: '',
-    phoneNumber: '(555) 123-4567',
-    address: '123 Tech Lane, Silicon Valley, CA',
-    website_url: 'https://itfgroup.com',
-    website_display: 'www.itfgroup.com',
-    email: 'john.doe@itfgroup.com',
-    meetingLink: 'https://meetings.hubspot.com/john-doe',
-    template_html: '<div>Mock Signature HTML</div>',
+    id: "1",
+    name: "John Doe",
+    title: "Software Engineer",
+    linkedin_url: "https://linkedin.com/in/johndoe",
+    facebook_url: "",
+    phoneNumber: "(555) 123-4567",
+    address: "123 Tech Lane, Silicon Valley, CA",
+    website_url: "https://itfgroup.com",
+    website_display: "www.itfgroup.com",
+    email: "john.doe@itfgroup.com",
+    meetingLink: "https://meetings.hubspot.com/john-doe",
+    template_html: "<div>Mock Signature HTML</div>",
     created_at: new Date().toISOString(),
-  }
+  },
 ];
 
 export default function AdminDashboard() {
@@ -53,13 +73,14 @@ export default function AdminDashboard() {
   const [signatures, setSignatures] = useState<EmailSignature[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  const [selectedSignature, setSelectedSignature] = useState<EmailSignature | null>(null);
+  const [selectedSignature, setSelectedSignature] =
+    useState<EmailSignature | null>(null);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
-        router.push('/admin');
+        router.push("/admin");
       } else {
         setIsCheckingAuth(false);
         fetchSignatures();
@@ -71,19 +92,25 @@ export default function AdminDashboard() {
 
   const fetchSignatures = async () => {
     try {
-      const q = query(collection(db, 'signatures'), orderBy('created_at', 'desc'));
+      const q = query(
+        collection(db, "signatures"),
+        orderBy("created_at", "desc"),
+      );
       const querySnapshot = await getDocs(q);
-      
-      const fetchedSignatures: EmailSignature[] = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      } as EmailSignature));
-      
+
+      const fetchedSignatures: EmailSignature[] = querySnapshot.docs.map(
+        (doc) =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          }) as EmailSignature,
+      );
+
       setSignatures(fetchedSignatures);
     } catch (error) {
-      console.error('Error fetching signatures:', error);
-      toast.error('Error', {
-        description: 'Failed to fetch signatures.',
+      console.error("Error fetching signatures:", error);
+      toast.error("Error", {
+        description: "Failed to fetch signatures.",
       });
     } finally {
       setIsLoading(false);
@@ -92,14 +119,14 @@ export default function AdminDashboard() {
 
   const handleLogout = async () => {
     await signOut(auth);
-    router.push('/admin');
+    router.push("/admin");
   };
 
   const copyToClipboard = (html: string) => {
     navigator.clipboard.writeText(html);
     setCopied(true);
-    toast.success('Copied!', {
-      description: 'HTML code copied to clipboard.',
+    toast.success("Copied!", {
+      description: "HTML code copied to clipboard.",
     });
     setTimeout(() => setCopied(false), 2000);
   };
@@ -122,8 +149,12 @@ export default function AdminDashboard() {
                 <Users className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">Admin Dashboard</h1>
-                <p className="text-sm text-slate-600">Manage email signature submissions</p>
+                <h1 className="text-2xl font-bold text-slate-900">
+                  Admin Dashboard
+                </h1>
+                <p className="text-sm text-slate-600">
+                  Manage email signature submissions
+                </p>
               </div>
             </div>
             <Button onClick={handleLogout} variant="outline" className="gap-2">
@@ -138,25 +169,35 @@ export default function AdminDashboard() {
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Submissions</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Total Submissions
+              </CardTitle>
               <Users className="w-4 h-4 text-slate-600" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{signatures.length}</div>
-              <p className="text-xs text-slate-600 mt-1">Email signatures generated</p>
+              <p className="text-xs text-slate-600 mt-1">
+                Email signatures generated
+              </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Latest Submission</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Latest Submission
+              </CardTitle>
               <Calendar className="w-4 h-4 text-slate-600" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {signatures.length > 0 ? format(new Date(signatures[0].created_at), 'MMM dd') : 'N/A'}
+                {signatures.length > 0
+                  ? format(new Date(signatures[0].created_at), "MMM dd")
+                  : "N/A"}
               </div>
-              <p className="text-xs text-slate-600 mt-1">Most recent activity</p>
+              <p className="text-xs text-slate-600 mt-1">
+                Most recent activity
+              </p>
             </CardContent>
           </Card>
 
@@ -175,7 +216,9 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader>
             <CardTitle>All Submissions</CardTitle>
-            <CardDescription>View and manage all email signature submissions</CardDescription>
+            <CardDescription>
+              View and manage all email signature submissions
+            </CardDescription>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -205,12 +248,21 @@ export default function AdminDashboard() {
                   <TableBody>
                     {signatures.map((signature) => (
                       <TableRow key={signature.id}>
-                        <TableCell className="font-medium">{signature.name}</TableCell>
+                        <TableCell className="font-medium">
+                          {signature.name}
+                        </TableCell>
                         <TableCell>{signature.title}</TableCell>
-                        <TableCell className="text-sm">{signature.email}</TableCell>
-                        <TableCell className="text-sm">{signature.phoneNumber}</TableCell>
                         <TableCell className="text-sm">
-                          {format(new Date(signature.created_at), 'MMM dd, yyyy')}
+                          {signature.email}
+                        </TableCell>
+                        <TableCell className="text-sm">
+                          {signature.phoneNumber}
+                        </TableCell>
+                        <TableCell className="text-sm">
+                          {format(
+                            new Date(signature.created_at),
+                            "MMM dd, yyyy",
+                          )}
                         </TableCell>
                         <TableCell>
                           <Dialog>
@@ -227,42 +279,74 @@ export default function AdminDashboard() {
                             </DialogTrigger>
                             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                               <DialogHeader>
-                                <DialogTitle>{signature.name} - Email Signature</DialogTitle>
+                                <DialogTitle>
+                                  {signature.name} - Email Signature
+                                </DialogTitle>
                                 <DialogDescription>
-                                  Created on {format(new Date(signature.created_at), "MMMM dd, yyyy 'at' h:mm a")}
+                                  Created on{" "}
+                                  {format(
+                                    new Date(signature.created_at),
+                                    "MMMM dd, yyyy 'at' h:mm a",
+                                  )}
                                 </DialogDescription>
                               </DialogHeader>
                               <div className="space-y-4">
                                 <div className="grid grid-cols-2 gap-4 p-4 bg-slate-50 rounded-lg">
                                   <div>
-                                    <p className="text-xs font-semibold text-slate-600 mb-1">Full Name</p>
+                                    <p className="text-xs font-semibold text-slate-600 mb-1">
+                                      Full Name
+                                    </p>
                                     <p className="text-sm">{signature.name}</p>
                                   </div>
                                   <div>
-                                    <p className="text-xs font-semibold text-slate-600 mb-1">Job Title</p>
+                                    <p className="text-xs font-semibold text-slate-600 mb-1">
+                                      Job Title
+                                    </p>
                                     <p className="text-sm">{signature.title}</p>
                                   </div>
                                   <div>
-                                    <p className="text-xs font-semibold text-slate-600 mb-1">Email</p>
+                                    <p className="text-xs font-semibold text-slate-600 mb-1">
+                                      Email
+                                    </p>
                                     <p className="text-sm">{signature.email}</p>
                                   </div>
                                   <div>
-                                    <p className="text-xs font-semibold text-slate-600 mb-1">Phone</p>
-                                    <p className="text-sm">{signature.phoneNumber}</p>
+                                    <p className="text-xs font-semibold text-slate-600 mb-1">
+                                      Phone
+                                    </p>
+                                    <p className="text-sm">
+                                      {signature.phoneNumber}
+                                    </p>
                                   </div>
                                   <div>
-                                    <p className="text-xs font-semibold text-slate-600 mb-1">Website</p>
-                                    <p className="text-sm">{signature.website_display || 'www.itfgroup.com'}</p>
+                                    <p className="text-xs font-semibold text-slate-600 mb-1">
+                                      Website
+                                    </p>
+                                    <p className="text-sm">
+                                      {signature.website_display ||
+                                        "www.itfgroup.com"}
+                                    </p>
                                   </div>
                                   <div>
-                                    <p className="text-xs font-semibold text-slate-600 mb-1">Address</p>
-                                    <p className="text-sm">{signature.address || '11990 Missouri Bottom Road Hazelwood, MO 63042'}</p>
+                                    <p className="text-xs font-semibold text-slate-600 mb-1">
+                                      Address
+                                    </p>
+                                    <p className="text-sm">
+                                      {signature.address ||
+                                        "11990 Missouri Bottom Road Hazelwood, MO, US 63042"}
+                                    </p>
                                   </div>
                                   {signature.meetingLink && (
                                     <div className="col-span-2">
-                                      <p className="text-xs font-semibold text-slate-600 mb-1">Meeting Link</p>
+                                      <p className="text-xs font-semibold text-slate-600 mb-1">
+                                        Meeting Link
+                                      </p>
                                       <p className="text-sm truncate text-blue-600 hover:underline">
-                                        <a href={signature.meetingLink} target="_blank" rel="noopener noreferrer">
+                                        <a
+                                          href={signature.meetingLink}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                        >
                                           {signature.meetingLink}
                                         </a>
                                       </p>
@@ -272,20 +356,32 @@ export default function AdminDashboard() {
 
                                 <div>
                                   <div className="flex items-center justify-between mb-2">
-                                    <h3 className="font-semibold text-sm">Preview</h3>
+                                    <h3 className="font-semibold text-sm">
+                                      Preview
+                                    </h3>
                                     <Button
-                                      onClick={() => copyToClipboard(signature.template_html)}
+                                      onClick={() =>
+                                        copyToClipboard(signature.template_html)
+                                      }
                                       size="sm"
                                       variant="outline"
                                       className="gap-2"
                                     >
-                                      {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                                      {copied ? 'Copied!' : 'Copy Signature'}
+                                      {copied ? (
+                                        <Check className="w-4 h-4" />
+                                      ) : (
+                                        <Copy className="w-4 h-4" />
+                                      )}
+                                      {copied ? "Copied!" : "Copy Signature"}
                                     </Button>
                                   </div>
                                   <div className="border rounded-lg p-4 bg-white overflow-auto min-h-[300px]">
                                     <div className="email-signature-preview">
-                                      <div dangerouslySetInnerHTML={{ __html: signature.template_html }} />
+                                      <div
+                                        dangerouslySetInnerHTML={{
+                                          __html: signature.template_html,
+                                        }}
+                                      />
                                     </div>
                                   </div>
                                 </div>

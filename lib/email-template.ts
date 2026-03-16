@@ -116,7 +116,7 @@ export function generateEmailTemplate(data: TemplateData): string {
                         <tr>
                             <td style="vertical-align: top; width: 16px; padding-right: 4px; padding-bottom: 6px;">
                                 <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/call-white.png"
-                                    alt="" style="width: 24px; display: block;" />
+                                    width="24" height="24" alt="" style="border: 0; display: block;" />
                             </td>
                             <td style="padding-bottom: 6px;">
                                 <a href="${phoneHref}" style="color:#0C1D32;text-decoration:none"
@@ -129,7 +129,7 @@ export function generateEmailTemplate(data: TemplateData): string {
                         <tr>
                             <td style="vertical-align: top; width: 16px; padding-right: 4px; padding-bottom: 6px;">
                                 <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/location-white.png"
-                                    alt="" style="width: 24px; display: block;" />
+                                    width="24" height="24" alt="" style="border: 0; display: block;" />
                             </td>
                             <td style="vertical-align: top;color: #0C1D32; text-decoration: none; padding-bottom: 6px;">
                                 <span style="color:#0C1D32; text-decoration:none;">
@@ -144,7 +144,7 @@ export function generateEmailTemplate(data: TemplateData): string {
                         <tr>
                             <td style="vertical-align: top; width: 16px; padding-right: 4px; padding-bottom: 6px;">
                                 <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/web-white.png"
-                                    alt="" style="width: 24px; display: block;padding-top: 2px;" />
+                                    width="24" height="24" alt="" style="border: 0; display: block; padding-top:2px;" />
                             </td>
                             <td style="padding-bottom: 6px;">
                                 <a href="${websiteUrl}" style="color: #0C1D32; text-decoration: none;"
@@ -157,7 +157,7 @@ export function generateEmailTemplate(data: TemplateData): string {
                         <tr>
                             <td style="vertical-align: top; width: 16px; padding-right: 4px; padding-bottom: 6px;">
                                 <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/email-white.png"
-                                    alt="" style="width: 24px; display: block;padding-top: 1px;" />
+                                    width="24" height="24" alt="" style="border: 0; display: block; padding-top:1px;" />
                             </td>
                             <td style="padding-bottom: 6px;">
                                 <a href="mailto:${data.email}" style="color: #0C1D32; text-decoration: none;"
@@ -173,18 +173,16 @@ export function generateEmailTemplate(data: TemplateData): string {
                     <table cellpadding="0" cellspacing="0">
                         <tr>
                             <td>
-                                <img style="height: 44px;"
-                                    src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/itf-logo.png"
-                                    alt="Logo" />
+                                <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/itf-logo.png"
+                                    width="138" height="44" alt="Logo" style="border: 0; display: block;" />
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <a
                                     href="https://www.carriersource.io/carriers/itf-group-llc?utm_campaign=itf-group-llc&utm_medium=email&utm_source=email_signature">
-                                    <img style="height: 82px;"
-                                        src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/CarrierSource_Rating_v2.png"
-                                        alt="Logo" />
+                                    <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/CarrierSource_Rating_v2.png"
+                                        width="138" height="82" alt="Logo" style="border: 0; display: block;" />
                                 </a>
                             </td>
                         </tr>
@@ -200,7 +198,7 @@ export function generateEmailTemplate(data: TemplateData): string {
                             vertical-align: middle;
                         ">
                             <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/call_truck_banner.png"
-                                alt="Footer Image" style="max-width: 102%; height: auto" class="CToWUd"
+                                width="606" height="114" alt="Footer Image" style="border: 0; display: block;" class="CToWUd"
                                 data-bit="iit" /></a>
                     </p>
                 </td>
@@ -221,14 +219,14 @@ export function generateEmailTemplate(data: TemplateData): string {
                             <td style="padding: 0px;background-color: #F3F3F4; ">
                                 <a href="https://itfgroup.com/solutions/forwarding" target="_blank">
                                     <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/Global_Forwarding.png"
-                                        alt="Certification 1" style="max-width: 100%" />
+                                        width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
                                 </a>
 
                             </td>
                             <td style="padding: 0px;background-color: #F3F3F4; ">
                                 <a href="https://itfgroup.com/solutions/logistics" target="_blank">
                                     <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/Logistics.png"
-                                        alt="Certification 1" style="max-width: 100% " />
+                                        width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
 
                                 </a>
 
@@ -236,7 +234,7 @@ export function generateEmailTemplate(data: TemplateData): string {
                             <td style="padding: 0px;background-color: #F3F3F4; ">
                                 <a href="https://itfgroup.com/solutions/trucking" target="_blank">
                                     <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/Trucking.png"
-                                        alt="Certification 1" style="max-width: 100%" />
+                                        width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
 
                                 </a>
 
@@ -244,14 +242,14 @@ export function generateEmailTemplate(data: TemplateData): string {
                             <td style="padding: 0px;background-color: #F3F3F4; ">
                                 <a href="https://itfgroup.com/" target="_blank">
                                     <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/ITF_logo_banner.png"
-                                        alt="Certification 4" style="max-width: 100%" />
+                                        width="99" height="48" alt="Certification 4" style="border: 0; display: block;" />
                                 </a>
 
                             </td>
                             <td style="padding: 0px;background-color: #F3F3F4;">
                                 <a href="https://itfgroup.com/solutions/tech" target="_blank">
                                     <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/Technology.png"
-                                        alt="Certification 1" style="max-width: 100%" />
+                                        width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
 
                                 </a>
 
@@ -259,7 +257,7 @@ export function generateEmailTemplate(data: TemplateData): string {
                             <td style="padding: 0px;background-color: #F3F3F4;">
                                 <a href="https://itfgroup.com/solutions/d-f" target="_blank">
                                     <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/d_and_f.png"
-                                        alt="Certification 1" style="max-width: 100%" />
+                                        width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
 
                                 </a>
 
@@ -279,7 +277,7 @@ export function generateEmailTemplate(data: TemplateData): string {
                             display: inline-block;
                             vertical-align: middle;
                         "><img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/certi_rect_line.png"
-                                alt="Footer Image" style="max-width: 100%; height: auto" class="CToWUd"
+                                width="595" height="20" alt="Footer Image" style="border: 0; display: block;" class="CToWUd"
                                 data-bit="iit" /></a>
                     </p>
                     <p style="margin: 0.1px">
@@ -287,7 +285,7 @@ export function generateEmailTemplate(data: TemplateData): string {
                             display: inline-block;
                             vertical-align: middle;
                         "><img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/email_certification.gif"
-                                alt="Footer Image" style="max-width: 100%; height: auto" class="CToWUd"
+                                width="595" height="54" alt="Footer Image" style="border: 0; display: block;" class="CToWUd"
                                 data-bit="iit" /></a>
                     </p>
                 </td>

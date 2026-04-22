@@ -18,7 +18,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { generateEmailTemplate, type TemplateData } from "@/lib/email-template";
+import {
+  generateEmailTemplate,
+  type TemplateData,
+  type TemplateVersion,
+} from "@/lib/email-template";
+import { cn } from "@/lib/utils";
 import { db } from "@/lib/firebase";
 import { collection, addDoc } from "firebase/firestore";
 import { Copy, Check, Mail, Maximize2, Shield } from "lucide-react";
@@ -32,8 +37,11 @@ export default function Home() {
     phoneNumber: "",
     email: "",
     meetingLink: "",
+    templateVersion: "extended",
   });
   const [generatedHtml, setGeneratedHtml] = useState("");
+  const [generatedTemplateVersion, setGeneratedTemplateVersion] =
+    useState<TemplateVersion | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,13 +58,29 @@ export default function Home() {
     setIsSubmitting(true);
 
     try {
-      const html = generateEmailTemplate(formData);
+      const templateVersion: TemplateVersion =
+        formData.templateVersion ?? "extended";
+      const payload: TemplateData = {
+        ...formData,
+        templateVersion,
+        meetingLink:
+          templateVersion === "extended" ? formData.meetingLink : undefined,
+      };
+      const html = generateEmailTemplate(payload);
       setGeneratedHtml(html);
+      setGeneratedTemplateVersion(templateVersion);
       setShowPreview(true);
 
       // Save to Firestore
       await addDoc(collection(db, "signatures"), {
-        ...formData,
+        name: formData.name,
+        title: formData.title,
+        phoneNumber: formData.phoneNumber,
+        email: formData.email,
+        ...(templateVersion === "extended" && formData.meetingLink?.trim()
+          ? { meetingLink: formData.meetingLink.trim() }
+          : {}),
+        templateVersion,
         template_html: html,
         created_at: new Date().toISOString(),
       });
@@ -200,19 +224,48 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-1 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="meetingLink">Schedule a call Link</Label>
-                    <Input
-                      id="meetingLink"
-                      name="meetingLink"
-                      type="url"
-                      value={formData.meetingLink}
-                      onChange={handleInputChange}
-                      placeholder="https://meetings.hubspot.com/your-link"
-                      className="text-base"
-                    />
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div
+                    className={cn(
+                      "space-y-2",
+                      (formData.templateVersion ?? "extended") ===
+                        "simplified" && "md:col-span-2",
+                    )}
+                  >
+                    <Label htmlFor="templateVersion">Signature format</Label>
+                    <select
+                      id="templateVersion"
+                      name="templateVersion"
+                      value={formData.templateVersion ?? "extended"}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          templateVersion: e.target.value as TemplateVersion,
+                        }))
+                      }
+                      className={cn(
+                        "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                      )}
+                    >
+                      <option value="simplified">Simplified version</option>
+                      <option value="extended">Extended version</option>
+                    </select>
                   </div>
+
+                  {(formData.templateVersion ?? "extended") === "extended" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="meetingLink">Schedule a call Link</Label>
+                      <Input
+                        id="meetingLink"
+                        name="meetingLink"
+                        type="url"
+                        value={formData.meetingLink}
+                        onChange={handleInputChange}
+                        placeholder="https://meetings.hubspot.com/your-link"
+                        className="text-base"
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex gap-3">
@@ -286,7 +339,13 @@ export default function Home() {
                       </div>
                     </>
                   )}
-                  <div className="border rounded-lg p-2 md:p-4 bg-white min-h-[300px] md:min-h-[500px] overflow-x-auto">
+                  <div
+                    className={cn(
+                      "border rounded-lg p-2 md:p-4 bg-white overflow-x-auto",
+                      generatedTemplateVersion === "extended" &&
+                        "min-h-[300px] md:min-h-[500px]",
+                    )}
+                  >
                     {generatedHtml ? (
                       <div className="min-w-[600px] p-2 email-signature-preview">
                         <div
@@ -294,7 +353,15 @@ export default function Home() {
                         />
                       </div>
                     ) : (
-                      <div className="flex items-center justify-center h-[300px] md:h-[500px] text-slate-400 text-sm md:text-base">
+                      <div
+                        className={cn(
+                          "flex items-center justify-center text-slate-400 text-sm md:text-base",
+                          (formData.templateVersion ?? "extended") ===
+                            "extended" && "h-[300px] md:h-[500px]",
+                          (formData.templateVersion ?? "extended") ===
+                            "simplified" && "min-h-[160px] py-8",
+                        )}
+                      >
                         Fill in the form and click Generate to see your
                         signature
                       </div>

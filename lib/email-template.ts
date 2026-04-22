@@ -1,12 +1,19 @@
+export type TemplateVersion = "simplified" | "extended";
+
 export type TemplateData = {
   name: string;
   title: string;
   phoneNumber: string;
   email: string;
   meetingLink?: string;
+  /** Default `extended` matches previous behavior when omitted. */
+  templateVersion?: TemplateVersion;
 };
 
 export function generateEmailTemplate(data: TemplateData): string {
+  const templateVersion = data.templateVersion ?? "extended";
+  const isExtended = templateVersion === "extended";
+
   // Hardcoded constants
   const linkedinUrl = "https://www.linkedin.com/company/itf-llc-group/about/";
   const facebookUrl = "https://www.facebook.com/itfgroup";
@@ -15,6 +22,112 @@ export function generateEmailTemplate(data: TemplateData): string {
   const websiteDisplay = "www.itfgroup.com";
   const meetingUrl =
     data.meetingLink || "https://meetings.hubspot.com/sam-burkhan";
+
+  const scheduleCallBannerRow = isExtended
+    ? `            <tr>
+                <td colspan="3" style="height: 32px;">
+                    <p style="margin: 0.1px">
+                        <a href="${meetingUrl}" style="
+                            display: inline-block;
+                            vertical-align: middle;
+                        ">
+                            <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/call_truck_banner.png"
+                                width="606" height="114" alt="Footer Image" style="border: 0; display: block;" class="CToWUd"
+                                data-bit="iit" /></a>
+                    </p>
+                </td>
+            </tr>`
+    : "";
+
+  const certificationFooterBlock = isExtended
+    ? `
+    <table
+        style="width: 595px; border-collapse: collapse; background-image: url('https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/grey-main-bg.png'); margin: 0px 0px 0px 5px;">
+        <tbody>
+            <tr
+                style="background-image: url('https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/grey-main-bg.png');">
+                <td colspan="3"
+                    style="padding: 0px 0; text-align: center;background-image: url('https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/grey-main-bg.png');">
+                    <table cellpadding="0" cellspacing="0"
+                        style="width: 100%; margin: 0 auto;background-image: url('https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/grey-main-bg.png');">
+                        <tr>
+                            <td style="padding: 0px;background-color: #73F8C3; ">
+                                <a href="https://itfgroup.com/solutions/forwarding" target="_blank">
+                                    <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/Global_Forwarding.png"
+                                        width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
+                                </a>
+
+                            </td>
+                            <td style="padding: 0px;background-color: #73F8C3; ">
+                                <a href="https://itfgroup.com/solutions/logistics" target="_blank">
+                                    <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/Logistics.png"
+                                        width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
+
+                                </a>
+
+                            </td>
+                            <td style="padding: 0px;background-color: #73F8C3; ">
+                                <a href="https://itfgroup.com/solutions/trucking" target="_blank">
+                                    <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/Trucking.png"
+                                        width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
+
+                                </a>
+
+                            </td>
+                            <td style="padding: 0px;background-color: #73F8C3; ">
+                                <a href="https://itfgroup.com/" target="_blank">
+                                    <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/ITF_logo_banner.png"
+                                        width="99" height="48" alt="Certification 4" style="border: 0; display: block;" />
+                                </a>
+
+                            </td>
+                            <td style="padding: 0px;background-color: #73F8C3;">
+                                <a href="https://itfgroup.com/solutions/tech" target="_blank">
+                                    <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/Technology.png"
+                                        width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
+
+                                </a>
+
+                            </td>
+                            <td style="padding: 0px;background-color: #73F8C3;">
+                                <a href="https://itfgroup.com/solutions/d-f" target="_blank">
+                                    <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/d_and_f.png"
+                                        width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="3"
+                    style="height: 32px;margin-top: 100px;background-image: url('https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/grey-main-bg.png');">
+
+                    <p style="margin: -2px">
+                        <a style="
+                            display: inline-block;
+                            vertical-align: middle;
+                        "><img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/certi_rect_line.png"
+                                width="595" height="20" alt="Footer Image" style="border: 0; display: block;" class="CToWUd"
+                                data-bit="iit" /></a>
+                    </p>
+                    <p style="margin: 0.1px">
+                        <a style="
+                            display: inline-block;
+                            vertical-align: middle;
+                        "><img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/email_certification.gif"
+                                width="595" height="54" alt="Footer Image" style="border: 0; display: block;" class="CToWUd"
+                                data-bit="iit" /></a>
+                    </p>
+                </td>
+            </tr>
+        </tbody>
+    </table>`
+    : "";
 
   // Extract numbers only for the tel: link
   // Handles extension format like "123-456-7890 ext. 123" -> "tel:1234567890,,123"
@@ -188,109 +301,10 @@ export function generateEmailTemplate(data: TemplateData): string {
                     </table>
                 </td>
 
-            </tr>
-            <tr>
-                <td colspan="3" style="height: 32px;">
-                    <p style="margin: 0.1px">
-                        <a href="${meetingUrl}" style="
-                            display: inline-block;
-                            vertical-align: middle;
-                        ">
-                            <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/call_truck_banner.png"
-                                width="606" height="114" alt="Footer Image" style="border: 0; display: block;" class="CToWUd"
-                                data-bit="iit" /></a>
-                    </p>
-                </td>
-            </tr>
+            </tr>${scheduleCallBannerRow}
 
         </tbody>
-    </table>
-    <table
-        style="width: 595px; border-collapse: collapse; background-image: url('https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/grey-main-bg.png'); margin: 0px 0px 0px 5px;">
-        <tbody>
-            <tr
-                style="background-image: url('https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/grey-main-bg.png');">
-                <td colspan="3"
-                    style="padding: 0px 0; text-align: center;background-image: url('https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/grey-main-bg.png');">
-                    <table cellpadding="0" cellspacing="0"
-                        style="width: 100%; margin: 0 auto;background-image: url('https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/grey-main-bg.png');">
-                        <tr>
-                            <td style="padding: 0px;background-color: #F3F3F4; ">
-                                <a href="https://itfgroup.com/solutions/forwarding" target="_blank">
-                                    <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/Global_Forwarding.png"
-                                        width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
-                                </a>
-
-                            </td>
-                            <td style="padding: 0px;background-color: #F3F3F4; ">
-                                <a href="https://itfgroup.com/solutions/logistics" target="_blank">
-                                    <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/Logistics.png"
-                                        width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
-
-                                </a>
-
-                            </td>
-                            <td style="padding: 0px;background-color: #F3F3F4; ">
-                                <a href="https://itfgroup.com/solutions/trucking" target="_blank">
-                                    <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/Trucking.png"
-                                        width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
-
-                                </a>
-
-                            </td>
-                            <td style="padding: 0px;background-color: #F3F3F4; ">
-                                <a href="https://itfgroup.com/" target="_blank">
-                                    <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/ITF_logo_banner.png"
-                                        width="99" height="48" alt="Certification 4" style="border: 0; display: block;" />
-                                </a>
-
-                            </td>
-                            <td style="padding: 0px;background-color: #F3F3F4;">
-                                <a href="https://itfgroup.com/solutions/tech" target="_blank">
-                                    <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/Technology.png"
-                                        width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
-
-                                </a>
-
-                            </td>
-                            <td style="padding: 0px;background-color: #F3F3F4;">
-                                <a href="https://itfgroup.com/solutions/d-f" target="_blank">
-                                    <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/d_and_f.png"
-                                        width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
-
-                                </a>
-
-                            </td>
-
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-
-            <tr>
-                <td colspan="3"
-                    style="height: 32px;margin-top: 100px;background-image: url('https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/grey-main-bg.png');">
-
-                    <p style="margin: -2px">
-                        <a style="
-                            display: inline-block;
-                            vertical-align: middle;
-                        "><img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/certi_rect_line.png"
-                                width="595" height="20" alt="Footer Image" style="border: 0; display: block;" class="CToWUd"
-                                data-bit="iit" /></a>
-                    </p>
-                    <p style="margin: 0.1px">
-                        <a style="
-                            display: inline-block;
-                            vertical-align: middle;
-                        "><img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/email_certification.gif"
-                                width="595" height="54" alt="Footer Image" style="border: 0; display: block;" class="CToWUd"
-                                data-bit="iit" /></a>
-                    </p>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    </table>${certificationFooterBlock}
 </body>
 
 </html>`;

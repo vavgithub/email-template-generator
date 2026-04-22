@@ -32,6 +32,7 @@ import {
 import { LogOut, Eye, Copy, Check, Users, Calendar, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import type { TemplateVersion } from "@/lib/email-template";
 
 export type EmailSignature = {
   id: string;
@@ -45,6 +46,7 @@ export type EmailSignature = {
   website_display?: string;
   email: string;
   meetingLink?: string;
+  templateVersion?: TemplateVersion;
   template_html: string;
   created_at: string;
 };
@@ -63,6 +65,7 @@ const MOCK_SIGNATURES: EmailSignature[] = [
     website_display: "www.itfgroup.com",
     email: "john.doe@itfgroup.com",
     meetingLink: "https://meetings.hubspot.com/john-doe",
+    templateVersion: "extended",
     template_html: "<div>Mock Signature HTML</div>",
     created_at: new Date().toISOString(),
   },
@@ -121,6 +124,11 @@ export default function AdminDashboard() {
     await signOut(auth);
     router.push("/admin");
   };
+
+  const formatLabel = (signature: EmailSignature) =>
+    (signature.templateVersion ?? "extended") === "extended"
+      ? "Extended"
+      : "Simplified";
 
   const copyToClipboard = (html: string) => {
     navigator.clipboard.writeText(html);
@@ -241,6 +249,7 @@ export default function AdminDashboard() {
                       <TableHead>Title</TableHead>
                       <TableHead>Email</TableHead>
                       <TableHead>Phone</TableHead>
+                      <TableHead>Format</TableHead>
                       <TableHead>Created</TableHead>
                       <TableHead>Actions</TableHead>
                     </TableRow>
@@ -257,6 +266,9 @@ export default function AdminDashboard() {
                         </TableCell>
                         <TableCell className="text-sm">
                           {signature.phoneNumber}
+                        </TableCell>
+                        <TableCell className="text-sm">
+                          {formatLabel(signature)}
                         </TableCell>
                         <TableCell className="text-sm">
                           {format(
@@ -320,6 +332,12 @@ export default function AdminDashboard() {
                                   </div>
                                   <div>
                                     <p className="text-xs font-semibold text-slate-600 mb-1">
+                                      Signature format
+                                    </p>
+                                    <p className="text-sm">{formatLabel(signature)}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs font-semibold text-slate-600 mb-1">
                                       Website
                                     </p>
                                     <p className="text-sm">
@@ -336,22 +354,24 @@ export default function AdminDashboard() {
                                         "11990 Missouri Bottom Road Hazelwood, MO, US 63042"}
                                     </p>
                                   </div>
-                                  {signature.meetingLink && (
-                                    <div className="col-span-2">
-                                      <p className="text-xs font-semibold text-slate-600 mb-1">
-                                        Meeting Link
-                                      </p>
-                                      <p className="text-sm truncate text-blue-600 hover:underline">
-                                        <a
-                                          href={signature.meetingLink}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                        >
-                                          {signature.meetingLink}
-                                        </a>
-                                      </p>
-                                    </div>
-                                  )}
+                                  {(signature.templateVersion ?? "extended") ===
+                                    "extended" &&
+                                    signature.meetingLink && (
+                                      <div className="col-span-2">
+                                        <p className="text-xs font-semibold text-slate-600 mb-1">
+                                          Meeting Link
+                                        </p>
+                                        <p className="text-sm truncate text-blue-600 hover:underline">
+                                          <a
+                                            href={signature.meetingLink}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                          >
+                                            {signature.meetingLink}
+                                          </a>
+                                        </p>
+                                      </div>
+                                    )}
                                 </div>
 
                                 <div>

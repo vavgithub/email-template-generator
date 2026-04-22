@@ -81,9 +81,7 @@
   }
 }
 
-/* Reset image styles for email signature preview to avoid conflict with Tailwind base styles */
+/* Only override Tailwind preflight max-width:100% so signature images keep their HTML width/height */
 .email-signature-preview img {
-  max-width: unset;
-  height: unset;
-  display: inline-block;
+  max-width: none;
 }

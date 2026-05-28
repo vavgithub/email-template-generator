@@ -66,7 +66,7 @@ export default function AdminLogin() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-red-600 rounded-full mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-brand rounded-full mb-4">
             <Lock className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">Admin Portal</h1>
@@ -89,7 +89,7 @@ export default function AdminLogin() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin@itfgroup.com"
+                    placeholder="admin@mtsgroup.com"
                     className="pl-10"
                     required
                   />
@@ -112,7 +112,7 @@ export default function AdminLogin() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full bg-red-600 hover:bg-red-700" disabled={isLoading}>
+              <Button type="submit" className="w-full bg-brand hover:bg-brand-hover text-slate-900" disabled={isLoading}>
                 {isLoading ? 'Signing in...' : 'Sign In'}
               </Button>
             </form>

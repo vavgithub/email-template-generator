@@ -175,7 +175,7 @@ export function generateEmailTemplate(data: TemplateData): string {
 
                         <tr>
                             <td>
-                                <span style="font-weight: bold; color: #FF3000; font-size: 16px;">${data.name}</span>
+                                <span style="font-weight: bold; color: #FFF935; font-size: 16px;">${data.name}</span>
                             </td>
                         </tr>
 
@@ -285,8 +285,8 @@ export function generateEmailTemplate(data: TemplateData): string {
                     <table cellpadding="0" cellspacing="0">
                         <tr>
                             <td>
-                                <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/itf-logo.png"
-                                    width="138" height="44" alt="Logo" style="border: 0; display: block;" />
+                                <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/MTS/MTS-logo.png"
+                                    width="110" height="35" alt="Logo" style="border: 0; display: block;" />
                             </td>
                         </tr>
                         <tr>

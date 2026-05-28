@@ -143,13 +143,13 @@ export default function Home() {
         </div> */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Mail className="w-8 h-8 md:w-10 md:h-10 text-red-600" />
+            <Mail className="w-8 h-8 md:w-10 md:h-10 text-brand" />
             <h1 className="text-2xl md:text-4xl font-bold text-slate-900">
               Email Signature Generator
             </h1>
           </div>
           <p className="text-sm md:text-base text-slate-600 max-w-2xl mx-auto px-2">
-            Create your personalized ITF Group email signature. Fill in your
+            Create your personalized MTS email signature. Fill in your
             details below and generate a professional HTML signature for your
             emails.
           </p>
@@ -272,7 +272,7 @@ export default function Home() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-red-600 hover:bg-red-700"
+                    className="w-full bg-brand hover:bg-brand-hover text-slate-900"
                   >
                     {isSubmitting ? "Generating..." : "Generate Signature"}
                   </Button>

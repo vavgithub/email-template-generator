@@ -6,8 +6,8 @@ import { Toaster } from 'sonner';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'MTS - Email Signature Generator',
-  description: 'Generate professional email signatures for MTS team members',
+  title: 'ITF Group - Email Signature Generator',
+  description: 'Generate professional email signatures for ITF Group team members',
 };
 
 export default function RootLayout({

@@ -264,10 +264,11 @@ export function generateEmailTemplate(data: TemplateData): string {
                                     width="24" height="24" alt="" style="border: 0; display: block;" />
                             </td>
                             <td style="padding-bottom: 6px;">
-                                <a href="${phoneHref}" style="color:#0C1D32;text-decoration:none"
-                                    target="_blank">
-                                    ${data.phoneNumber}
-                                </a>
+                                ${
+                                  isPlain
+                                    ? `<a style="color:#0C1D32;text-decoration:none;cursor:text;">${data.phoneNumber}</a>`
+                                    : `<a href="${phoneHref}" style="color:#0C1D32;text-decoration:none" target="_blank">${data.phoneNumber}</a>`
+                                }
                             </td>
                         </tr>
 
@@ -277,12 +278,11 @@ export function generateEmailTemplate(data: TemplateData): string {
                                     width="24" height="24" alt="" style="border: 0; display: block;" />
                             </td>
                             <td style="vertical-align: top;color: #0C1D32; text-decoration: none; padding-bottom: 6px;">
-                                <span style="color:#0C1D32; text-decoration:none;">
-                                    <a href="#"
-                                        style="color:#0C1D32; text-decoration:none; pointer-events:none; cursor:default;">
-                                        ${address}
-                                    </a>
-                                </span>
+                                ${
+                                  isPlain
+                                    ? `<a style="color:#0C1D32;text-decoration:none;cursor:text;">${address}</a>`
+                                    : `<span style="color:#0C1D32; text-decoration:none;"><a href="#" style="color:#0C1D32; text-decoration:none; pointer-events:none; cursor:default;">${address}</a></span>`
+                                }
                             </td>
                         </tr>
 
@@ -292,10 +292,11 @@ export function generateEmailTemplate(data: TemplateData): string {
                                     width="24" height="24" alt="" style="border: 0; display: block; padding-top:2px;" />
                             </td>
                             <td style="padding-bottom: 6px;">
-                                <a href="${websiteUrl}" style="color: #0C1D32; text-decoration: none;"
-                                    target="_blank">
-                                    ${websiteDisplay}
-                                </a>
+                                ${
+                                  isPlain
+                                    ? `<a style="color:#0C1D32;text-decoration:none;cursor:text;">${websiteDisplay}</a>`
+                                    : `<a href="${websiteUrl}" style="color: #0C1D32; text-decoration: none;" target="_blank">${websiteDisplay}</a>`
+                                }
                             </td>
                         </tr>${emailRow}
                     </table>

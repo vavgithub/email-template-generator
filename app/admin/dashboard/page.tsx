@@ -125,10 +125,16 @@ export default function AdminDashboard() {
     router.push("/admin");
   };
 
-  const formatLabel = (signature: EmailSignature) =>
-    (signature.templateVersion ?? "extended") === "extended"
-      ? "Extended"
-      : "Simplified";
+  const formatLabel = (signature: EmailSignature) => {
+    switch (signature.templateVersion ?? "extended") {
+      case "plain":
+        return "Plain text";
+      case "simplified":
+        return "Simplified";
+      default:
+        return "Extended";
+    }
+  };
 
   const copyToClipboard = (html: string) => {
     navigator.clipboard.writeText(html);

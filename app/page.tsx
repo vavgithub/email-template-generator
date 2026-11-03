@@ -60,8 +60,10 @@ export default function Home() {
     try {
       const templateVersion: TemplateVersion =
         formData.templateVersion ?? "extended";
+      const email = templateVersion === "plain" ? "" : formData.email;
       const payload: TemplateData = {
         ...formData,
+        email,
         templateVersion,
         meetingLink:
           templateVersion === "extended" ? formData.meetingLink : undefined,
@@ -76,7 +78,7 @@ export default function Home() {
         name: formData.name,
         title: formData.title,
         phoneNumber: formData.phoneNumber,
-        email: formData.email,
+        ...(email ? { email } : {}),
         ...(templateVersion === "extended" && formData.meetingLink?.trim()
           ? { meetingLink: formData.meetingLink.trim() }
           : {}),
@@ -209,19 +211,23 @@ export default function Home() {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email Address *</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder="yourname@itfgroup.com"
-                      required
-                      className="text-base"
-                    />
-                  </div>
+                  {(formData.templateVersion ?? "extended") !== "plain" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email Address *</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="text"
+                        inputMode="email"
+                        autoComplete="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        placeholder="yourname@itfgroup.com"
+                        required
+                        className="text-base text-foreground no-underline"
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
@@ -249,6 +255,7 @@ export default function Home() {
                     >
                       <option value="simplified">Simplified version</option>
                       <option value="extended">Extended version</option>
+                      <option value="plain">Plain text</option>
                     </select>
                   </div>
 
@@ -358,8 +365,8 @@ export default function Home() {
                           "flex items-center justify-center text-slate-400 text-sm md:text-base",
                           (formData.templateVersion ?? "extended") ===
                             "extended" && "h-[300px] md:h-[500px]",
-                          (formData.templateVersion ?? "extended") ===
-                            "simplified" && "min-h-[160px] py-8",
+                          (formData.templateVersion ?? "extended") !==
+                            "extended" && "min-h-[160px] py-8",
                         )}
                       >
                         Fill in the form and click Generate to see your

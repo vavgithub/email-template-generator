@@ -1,4 +1,4 @@
-export type TemplateVersion = "simplified" | "extended";
+export type TemplateVersion = "simplified" | "extended" | "plain";
 
 export type TemplateData = {
   name: string;
@@ -13,16 +13,73 @@ export type TemplateData = {
 export function generateEmailTemplate(data: TemplateData): string {
   const templateVersion = data.templateVersion ?? "extended";
   const isExtended = templateVersion === "extended";
+  const isPlain = templateVersion === "plain";
 
   // Hardcoded constants
   const linkedinUrl = "https://www.linkedin.com/company/itf-llc-group/about/";
   const facebookUrl = "https://www.facebook.com/itfgroup";
   const address = "11990 Missouri Bottom Road Hazelwood, MO, US 63042";
   const websiteUrl = "http://itfgroup.com/";
-  const websiteDisplay = "www.itfgroup.com";
+  const websiteDisplay = isPlain ? "itfgroup.com" : "www.itfgroup.com";
   const meetingUrl =
     data.meetingLink || "https://meetings.hubspot.com/sam-burkhan";
 
+  const socialIconsRow = isPlain
+    ? ""
+    : `
+                        <tr>
+                            <td>
+                                <table style="padding-top:18px" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td style="padding-right: 4px;width: 30px;height: 30px;">
+                                            <a href="${linkedinUrl}"
+                                                target="_blank" style="display: inline-block;height: 30px;">
+                                                <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/linkedin.png"
+                                                    width="32" height="32" style="border: 0; display: inline-block;"
+                                                    alt="Linkedin">
+                                            </a>
+                                        </td>
+                                        <td style="padding-right: 4px;width: 30px;height: 30px;">
+                                            <a href="${facebookUrl}" target="_blank"
+                                                style="display: inline-block;height: 30px;">
+                                                <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/facebook.png"
+                                                    width="32" height="32" style="border: 0; display: inline-block;"
+                                                    alt="Facebook">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>`;
+
+  const emailRow = isPlain
+    ? ""
+    : `
+                        <tr>
+                            <td style="vertical-align: top; width: 16px; padding-right: 4px; padding-bottom: 6px;">
+                                <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/email-white.png"
+                                    width="24" height="24" alt="" style="border: 0; display: block; padding-top:1px;" />
+                            </td>
+                            <td style="padding-bottom: 6px;">
+                                <a href="mailto:${data.email}" style="color: #0C1D32; text-decoration: none;"
+                                    target="_blank">
+                                    ${data.email}
+                                </a>
+                            </td>
+                        </tr>`;
+
+  const carrierSourceRow = isPlain
+    ? ""
+    : `
+                        <tr>
+                            <td>
+                                <a
+                                    href="https://www.carriersource.io/carriers/itf-group-llc?utm_campaign=itf-group-llc&utm_medium=email&utm_source=email_signature">
+                                    <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/CarrierSource_Rating_v2.png"
+                                        width="138" height="82" alt="Logo" style="border: 0; display: block;" />
+                                </a>
+                            </td>
+                        </tr>`;
   const scheduleCallBannerRow = isExtended
     ? `            <tr>
                 <td colspan="3" style="height: 32px;">
@@ -51,14 +108,14 @@ export function generateEmailTemplate(data: TemplateData): string {
                     <table cellpadding="0" cellspacing="0"
                         style="width: 100%; margin: 0 auto;background-image: url('https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/grey-main-bg.png');">
                         <tr>
-                            <td style="padding: 0px;background-color: #73F8C3; ">
+                            <td style="padding: 0px;background-color: #F3F3F4; ">
                                 <a href="https://itfgroup.com/solutions/forwarding" target="_blank">
                                     <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/Global_Forwarding.png"
                                         width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
                                 </a>
 
                             </td>
-                            <td style="padding: 0px;background-color: #73F8C3; ">
+                            <td style="padding: 0px;background-color: #F3F3F4; ">
                                 <a href="https://itfgroup.com/solutions/logistics" target="_blank">
                                     <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/Logistics.png"
                                         width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
@@ -66,7 +123,7 @@ export function generateEmailTemplate(data: TemplateData): string {
                                 </a>
 
                             </td>
-                            <td style="padding: 0px;background-color: #73F8C3; ">
+                            <td style="padding: 0px;background-color: #F3F3F4; ">
                                 <a href="https://itfgroup.com/solutions/trucking" target="_blank">
                                     <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/Trucking.png"
                                         width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
@@ -74,14 +131,14 @@ export function generateEmailTemplate(data: TemplateData): string {
                                 </a>
 
                             </td>
-                            <td style="padding: 0px;background-color: #73F8C3; ">
+                            <td style="padding: 0px;background-color: #F3F3F4; ">
                                 <a href="https://itfgroup.com/" target="_blank">
                                     <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/ITF_logo_banner.png"
                                         width="99" height="48" alt="Certification 4" style="border: 0; display: block;" />
                                 </a>
 
                             </td>
-                            <td style="padding: 0px;background-color: #73F8C3;">
+                            <td style="padding: 0px;background-color: #F3F3F4;">
                                 <a href="https://itfgroup.com/solutions/tech" target="_blank">
                                     <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/Technology.png"
                                         width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
@@ -89,7 +146,7 @@ export function generateEmailTemplate(data: TemplateData): string {
                                 </a>
 
                             </td>
-                            <td style="padding: 0px;background-color: #73F8C3;">
+                            <td style="padding: 0px;background-color: #F3F3F4;">
                                 <a href="https://itfgroup.com/solutions/d-f" target="_blank">
                                     <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/d_and_f.png"
                                         width="99" height="48" alt="Certification 1" style="border: 0; display: block;" />
@@ -185,31 +242,7 @@ export function generateEmailTemplate(data: TemplateData): string {
                                     style="width: 10%; color: #0C1D32 ; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; ">${data.title}</span>
                             </td>
 
-                        </tr>
-                        <tr>
-                            <td>
-                                <table style="padding-top:18px" cellpadding="0" cellspacing="0">
-                                    <tr>
-                                        <td style="padding-right: 4px;width: 30px;height: 30px;">
-                                            <a href="${linkedinUrl}"
-                                                target="_blank" style="display: inline-block;height: 30px;">
-                                                <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/linkedin.png"
-                                                    width="32" height="32" style="border: 0; display: inline-block;"
-                                                    alt="Linkedin">
-                                            </a>
-                                        </td>
-                                        <td style="padding-right: 4px;width: 30px;height: 30px;">
-                                            <a href="${facebookUrl}" target="_blank"
-                                                style="display: inline-block;height: 30px;">
-                                                <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/facebook.png"
-                                                    width="32" height="32" style="border: 0; display: inline-block;"
-                                                    alt="Facebook">
-                                            </a>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
+                        </tr>${socialIconsRow}
 
                     </table>
                 </td>
@@ -264,20 +297,7 @@ export function generateEmailTemplate(data: TemplateData): string {
                                     ${websiteDisplay}
                                 </a>
                             </td>
-                        </tr>
-
-                        <tr>
-                            <td style="vertical-align: top; width: 16px; padding-right: 4px; padding-bottom: 6px;">
-                                <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/email-white.png"
-                                    width="24" height="24" alt="" style="border: 0; display: block; padding-top:1px;" />
-                            </td>
-                            <td style="padding-bottom: 6px;">
-                                <a href="mailto:${data.email}" style="color: #0C1D32; text-decoration: none;"
-                                    target="_blank">
-                                    ${data.email}
-                                </a>
-                            </td>
-                        </tr>
+                        </tr>${emailRow}
                     </table>
                 </td>
 
@@ -288,16 +308,7 @@ export function generateEmailTemplate(data: TemplateData): string {
                                 <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/itf-logo.png"
                                     width="138" height="44" alt="Logo" style="border: 0; display: block;" />
                             </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a
-                                    href="https://www.carriersource.io/carriers/itf-group-llc?utm_campaign=itf-group-llc&utm_medium=email&utm_source=email_signature">
-                                    <img src="https://prodwebsitesassets.blob.core.windows.net/email-assets/ITF/CarrierSource_Rating_v2.png"
-                                        width="138" height="82" alt="Logo" style="border: 0; display: block;" />
-                                </a>
-                            </td>
-                        </tr>
+                        </tr>${carrierSourceRow}
                     </table>
                 </td>
 

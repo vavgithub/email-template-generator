@@ -212,6 +212,36 @@ export function generateEmailTemplate(data: TemplateData): string {
     }
   }
 
+  // Plain text only: real text, not a link. A hidden break stops Gmail from
+  // turning the phone, address, and website into links on paste.
+  const escapeHtml = (value: string) =>
+    value
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  const plainStyle = "color:#0C1D32;text-decoration:none;";
+  const plainBreak = '<span style="font-size:0;line-height:0;">&#8288;</span>';
+  const asPlain = (parts: string[]) =>
+    parts
+      .map((part) => `<span style="${plainStyle}">${escapeHtml(part)}</span>`)
+      .join(plainBreak);
+  const plainPhone = asPlain(
+    data.phoneNumber.length > 4
+      ? [
+          data.phoneNumber.slice(0, Math.ceil(data.phoneNumber.length / 2)),
+          data.phoneNumber.slice(Math.ceil(data.phoneNumber.length / 2)),
+        ]
+      : [data.phoneNumber],
+  );
+  const plainAddress = asPlain([
+    "119",
+    "90 Missouri Bottom Road Hazelwood, M",
+    "O, U",
+    "S 63",
+    "042",
+  ]);
+  const plainWebsite = asPlain(["itfgroup", ".com"]);
+
   return `<!DOCTYPE html>
 <html lang="en">
 
@@ -266,7 +296,7 @@ export function generateEmailTemplate(data: TemplateData): string {
                             <td style="padding-bottom: 6px;">
                                 ${
                                   isPlain
-                                    ? `<a style="color:#0C1D32;text-decoration:none;cursor:text;">${data.phoneNumber}</a>`
+                                    ? plainPhone
                                     : `<a href="${phoneHref}" style="color:#0C1D32;text-decoration:none" target="_blank">${data.phoneNumber}</a>`
                                 }
                             </td>
@@ -280,7 +310,7 @@ export function generateEmailTemplate(data: TemplateData): string {
                             <td style="vertical-align: top;color: #0C1D32; text-decoration: none; padding-bottom: 6px;">
                                 ${
                                   isPlain
-                                    ? `<a style="color:#0C1D32;text-decoration:none;cursor:text;">${address}</a>`
+                                    ? plainAddress
                                     : `<span style="color:#0C1D32; text-decoration:none;"><a href="#" style="color:#0C1D32; text-decoration:none; pointer-events:none; cursor:default;">${address}</a></span>`
                                 }
                             </td>
@@ -294,7 +324,7 @@ export function generateEmailTemplate(data: TemplateData): string {
                             <td style="padding-bottom: 6px;">
                                 ${
                                   isPlain
-                                    ? `<a style="color:#0C1D32;text-decoration:none;cursor:text;">${websiteDisplay}</a>`
+                                    ? plainWebsite
                                     : `<a href="${websiteUrl}" style="color: #0C1D32; text-decoration: none;" target="_blank">${websiteDisplay}</a>`
                                 }
                             </td>

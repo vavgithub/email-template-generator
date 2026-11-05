@@ -197,83 +197,101 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="phoneNumber">Phone Number Display *</Label>
-                    <Input
-                      id="phoneNumber"
-                      name="phoneNumber"
-                      value={formData.phoneNumber}
-                      onChange={handleInputChange}
-                      placeholder="(877) 477-9677 ext. 116"
-                      required
-                      className="text-base"
-                    />
-                  </div>
-
-                  {(formData.templateVersion ?? "extended") !== "plain" && (
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email Address *</Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="text"
-                        inputMode="email"
-                        autoComplete="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder="yourname@itfgroup.com"
-                        required
-                        className="text-base text-foreground no-underline"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div
-                    className={cn(
-                      "space-y-2",
-                      (formData.templateVersion ?? "extended") ===
-                        "simplified" && "md:col-span-2",
-                    )}
-                  >
-                    <Label htmlFor="templateVersion">Signature format</Label>
-                    <select
-                      id="templateVersion"
-                      name="templateVersion"
-                      value={formData.templateVersion ?? "extended"}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          templateVersion: e.target.value as TemplateVersion,
-                        }))
-                      }
+                {(() => {
+                  const templateVersion = formData.templateVersion ?? "extended";
+                  const isPlain = templateVersion === "plain";
+                  const signatureFormat = (
+                    <div
                       className={cn(
-                        "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                        "space-y-2",
+                        templateVersion === "simplified" && "md:col-span-2",
                       )}
                     >
-                      <option value="simplified">Simplified version</option>
-                      <option value="extended">Extended version</option>
-                      <option value="plain">Plain text</option>
-                    </select>
-                  </div>
-
-                  {(formData.templateVersion ?? "extended") === "extended" && (
-                    <div className="space-y-2">
-                      <Label htmlFor="meetingLink">Schedule a call Link</Label>
-                      <Input
-                        id="meetingLink"
-                        name="meetingLink"
-                        type="url"
-                        value={formData.meetingLink}
-                        onChange={handleInputChange}
-                        placeholder="https://meetings.hubspot.com/your-link"
-                        className="text-base"
-                      />
+                      <Label htmlFor="templateVersion">Signature format</Label>
+                      <select
+                        id="templateVersion"
+                        name="templateVersion"
+                        value={templateVersion}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            templateVersion: e.target.value as TemplateVersion,
+                          }))
+                        }
+                        className={cn(
+                          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                        )}
+                      >
+                        <option value="simplified">Simplified version</option>
+                        <option value="extended">Extended version</option>
+                        <option value="plain">Plain text</option>
+                      </select>
                     </div>
-                  )}
-                </div>
+                  );
+
+                  return (
+                    <>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="phoneNumber">
+                            Phone Number Display *
+                          </Label>
+                          <Input
+                            id="phoneNumber"
+                            name="phoneNumber"
+                            value={formData.phoneNumber}
+                            onChange={handleInputChange}
+                            placeholder="(877) 477-9677 ext. 116"
+                            required
+                            className="text-base"
+                          />
+                        </div>
+
+                        {isPlain ? (
+                          signatureFormat
+                        ) : (
+                          <div className="space-y-2">
+                            <Label htmlFor="email">Email Address *</Label>
+                            <Input
+                              id="email"
+                              name="email"
+                              type="text"
+                              inputMode="email"
+                              autoComplete="email"
+                              value={formData.email}
+                              onChange={handleInputChange}
+                              placeholder="yourname@itfgroup.com"
+                              required
+                              className="text-base text-foreground no-underline"
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      {!isPlain && (
+                        <div className="grid md:grid-cols-2 gap-4">
+                          {signatureFormat}
+                          {templateVersion === "extended" && (
+                            <div className="space-y-2">
+                              <Label htmlFor="meetingLink">
+                                Schedule a call Link
+                              </Label>
+                              <Input
+                                id="meetingLink"
+                                name="meetingLink"
+                                type="url"
+                                value={formData.meetingLink}
+                                onChange={handleInputChange}
+                                placeholder="https://meetings.hubspot.com/your-link"
+                                className="text-base"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
 
                 <div className="flex gap-3">
                   <Button
